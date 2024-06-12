@@ -15,9 +15,27 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Primary: Story = {
+export const SingleContinious: Story = {
+  args: {
+    type: "Continuous",
+    subtype: "Single",
+    defaultValue: 30,
+  },
+};
+
+export const RangeContinious: Story = {
+  args: {
+    type: "Continuous",
+    subtype: "Range",
+    defaultValue: [20, 60],
+  },
+};
+
+export const DiscreateSingle: Story = {
   args: {
     type: "Discreet",
-    subtype: "Single"
+    subtype: "Single",
+    steps: 9,
+    defaultValue: 10,
   },
 };

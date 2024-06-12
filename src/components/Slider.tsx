@@ -10,24 +10,40 @@ type SliderSubtype = "Single" | "Range";
 interface SliderProps {
   type: SliderType;
   subtype: SliderSubtype;
-  // add default value
+  defaultValue?: number | number[];
+  steps?: number;
   onChange: (value: number | number[]) => void;
 }
 
-const Slider = ({ type, subtype, onChange }: SliderProps) => {
+const Slider = ({
+  type,
+  subtype,
+  onChange,
+  defaultValue,
+  steps = 7,
+}: SliderProps) => {
   const min = 0;
   const max = 100;
-  const steps = 7;
   const stepSize = (max - min) / (steps - 1);
 
   const [value, setValue] = useState<number | number[]>(
-    subtype === "Range" ? [min, max] : min
+    subtype === "Range"
+      ? defaultValue && Array.isArray(defaultValue)
+        ? defaultValue
+        : [min, max]
+      : defaultValue || min
   );
   const sliderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setValue(subtype === "Range" ? [min, max] : min);
-  }, [subtype]);
+    setValue(
+      subtype === "Range"
+        ? defaultValue && Array.isArray(defaultValue)
+          ? defaultValue
+          : [min, max]
+        : defaultValue || min
+    );
+  }, [subtype, type]);
 
   const getDiscreteValue = (newValue: number) => {
     const stepIndex = Math.floor(newValue / stepSize);
@@ -92,6 +108,7 @@ const Slider = ({ type, subtype, onChange }: SliderProps) => {
 
   return (
     <div className="slider-container" ref={sliderRef}>
+      {JSON.stringify(value)}
       <div className="slider-track">
         <div
           className="slider-highlight"
