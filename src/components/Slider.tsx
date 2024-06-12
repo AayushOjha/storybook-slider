@@ -24,6 +24,7 @@ const Slider = ({
 }: SliderProps) => {
   const min = 0;
   const max = 100;
+  if (steps > 10) steps = 10
   const stepSize = (max - min) / (steps - 1);
 
   const [value, setValue] = useState<number | number[]>(
