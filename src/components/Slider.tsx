@@ -1,6 +1,8 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { clamp } from "lodash";
 import "./slider.css";
+import "./handle.css";
+import { Handle } from "./Handle";
 
 type SliderType = "Continuous" | "Discreet";
 type SliderSubtype = "Single" | "Range";
@@ -8,6 +10,7 @@ type SliderSubtype = "Single" | "Range";
 interface SliderProps {
   type: SliderType;
   subtype: SliderSubtype;
+  // add default value
   onChange: (value: number | number[]) => void;
 }
 
@@ -22,67 +25,70 @@ const Slider = ({ type, subtype, onChange }: SliderProps) => {
   );
   const sliderRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    setValue(subtype === "Range" ? [min, max] : min);
+  }, [subtype]);
+
   const getDiscreteValue = (newValue: number) => {
     const stepIndex = Math.floor(newValue / stepSize);
-    let res = clamp((stepIndex * stepSize), 0, 100)
+    let res = clamp(stepIndex * stepSize, 0, 100);
     return res;
   };
 
-  const handleMouseDown =
-    (thumb: "left" | "right") => () => {
-      const slider = sliderRef.current;
-      if (!slider) return;
+  const handleMouseDown = (thumb: "left" | "right") => () => {
+    const slider = sliderRef.current;
+    if (!slider) return;
 
-      const onMouseMove = (moveEvent: MouseEvent) => {
-        const rect = slider.getBoundingClientRect();
-        const newValue = ((moveEvent.clientX - rect.left) / rect.width) * 100;
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      const rect = slider.getBoundingClientRect();
+      const newValue = ((moveEvent.clientX - rect.left) / rect.width) * 100;
 
-        if (type === "Discreet") {
-          const discreteValue = getDiscreteValue(newValue);
-          if (subtype === "Range" && Array.isArray(value)) {
-            const newValueArray = [...value];
-            if (thumb === "left") {
-              newValueArray[0] = Math.min(discreteValue, newValueArray[1]);
-            } else {
-              newValueArray[1] = Math.max(discreteValue, newValueArray[0]);
-            }
-            setValue(newValueArray);
-            onChange(newValueArray);
+      if (type === "Discreet") {
+        const discreteValue = getDiscreteValue(newValue);
+        if (subtype === "Range" && Array.isArray(value)) {
+          const newValueArray = [...value];
+          if (thumb === "left") {
+            newValueArray[0] = Math.min(discreteValue, newValueArray[1]);
           } else {
-            setValue(discreteValue);
-            onChange(discreteValue);
+            newValueArray[1] = Math.max(discreteValue, newValueArray[0]);
           }
+          setValue(newValueArray);
+          onChange(newValueArray);
         } else {
-          if (subtype === "Range" && Array.isArray(value)) {
-            const newValueArray = [...value];
-            if (thumb === "left") {
-              newValueArray[0] = Math.min(
-                Math.max(newValue, 0),
-                newValueArray[1]
-              );
-            } else {
-              newValueArray[1] = Math.max(
-                Math.min(newValue, 100),
-                newValueArray[0]
-              );
-            }
-            setValue(newValueArray);
-            onChange(newValueArray);
-          } else {
-            setValue(Math.min(Math.max(newValue, 0), 100));
-            onChange(Math.max(newValue, 0));
-          }
+          setValue(discreteValue);
+          onChange(discreteValue);
         }
-      };
-
-      const onMouseUp = () => {
-        document.removeEventListener("mousemove", onMouseMove);
-        document.removeEventListener("mouseup", onMouseUp);
-      };
-
-      document.addEventListener("mousemove", onMouseMove);
-      document.addEventListener("mouseup", onMouseUp);
+      } else {
+        if (subtype === "Range" && Array.isArray(value)) {
+          const newValueArray = [...value];
+          if (thumb === "left") {
+            newValueArray[0] = Math.min(
+              Math.max(newValue, 0),
+              newValueArray[1]
+            );
+          } else {
+            newValueArray[1] = Math.max(
+              Math.min(newValue, 100),
+              newValueArray[0]
+            );
+          }
+          setValue(newValueArray);
+          onChange(newValueArray);
+        } else {
+          setValue(Math.min(Math.max(newValue, 0), 100));
+          onChange(Math.max(newValue, 0));
+        }
+      }
     };
+
+    const onMouseUp = () => {
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+    };
+
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
+  };
 
   return (
     <div className="slider-container" ref={sliderRef}>
@@ -100,35 +106,19 @@ const Slider = ({ type, subtype, onChange }: SliderProps) => {
         />
         {subtype === "Range" && Array.isArray(value) ? (
           <>
-            <div
-              className="slider-thumb thumb-left"
-              style={{
-                left: `${((value[0] - min) / (max - min)) * 100}%`,
-              }}
-              onMouseDown={handleMouseDown("left")}
-            >
-              <div className="slider-thumb-inner" />
-            </div>
-            <div
-              className="slider-thumb thumb-right"
-              style={{
-                left: `${((value[1] - min) / (max - min)) * 100}%`,
-              }}
-              onMouseDown={handleMouseDown("right")}
-            >
-              <div className="slider-thumb-inner" />
-            </div>
+            <Handle
+              type="left"
+              value={value}
+              handleMouseDown={handleMouseDown}
+            />
+            <Handle
+              type="right"
+              value={value}
+              handleMouseDown={handleMouseDown}
+            />
           </>
         ) : (
-          <div
-            className="slider-thumb thumb-left"
-            style={{
-              left: `${(((value as number) - min) / (max - min)) * 100}%`,
-            }}
-            onMouseDown={handleMouseDown("left")}
-          >
-            <div className="slider-thumb-inner" />
-          </div>
+          <Handle type="left" value={value} handleMouseDown={handleMouseDown} />
         )}
       </div>
     </div>
