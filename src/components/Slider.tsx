@@ -109,7 +109,6 @@ const Slider = ({
 
   return (
     <div className="slider-container" ref={sliderRef}>
-      {JSON.stringify(value)}
       <div className="slider-track">
         <div
           className="slider-highlight"
