@@ -1,8 +1,32 @@
-input[type="range"] {
-    -webkit-appearance: none;
-    appearance: none;
-    background: green;
-    cursor: pointer;
-    width: 15rem;
-    height: 7px;
-  }
+.slider-track {
+  width: 100%;
+  height: var(--track-height);
+  border-radius: 40px;
+  background: #f2f3f5;
+
+  position: relative;
+}
+
+.slider-thumb {
+  position: absolute;
+  left: calc(-1 * (var(--thumb-size) / 2));
+  top: calc(-1 * ((var(--thumb-size) / 2) - (var(--track-height) / 2)));
+  width: var(--thumb-size);
+  height: var(--thumb-size);
+  border: 2px solid var(--primary-color);
+  border-radius: 50%;
+  cursor: pointer;
+
+  /* background-color: white; */
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slider-thumb-inner{
+  width: calc(var(--thumb-size) / 2);
+  height: calc(var(--thumb-size) / 2);
+  background-color: var(--primary-color);
+  border-radius: 50%;
+}

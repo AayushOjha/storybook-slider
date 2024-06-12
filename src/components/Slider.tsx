@@ -1,5 +1,5 @@
 import React from "react";
-import "./slider.css"
+import "./slider.css";
 
 type SliderType = "Continuous" | "Discreet";
 type SliderSubtype = "Single" | "Range";
@@ -12,7 +12,6 @@ interface SliderProps {
   max?: number;
   onChange: (value: number | number[]) => void;
 }
-
 
 const Slider = ({
   type,
@@ -38,62 +37,17 @@ const Slider = ({
     onChange(newValue);
   };
 
-  const renderSlider = () => {
-    if (type === "Continuous") {
-      if (subtype === "Single") {
-        return (
-          <input
-            type="range"
-            min={min}
-            max={max}
-            value={value as number}
-            onChange={handleChange}
-          />
-        );
-      } else {
-        return (
-          <input
-            type="range"
-            min={min}
-            max={max}
-            value={(value as number[]).join(",")}
-            onChange={handleChange}
-            multiple
-          />
-        );
-      }
-    } else if (type === "Discreet" && steps) {
-      const stepSize = (max - min) / (steps - 1);
-
-      if (subtype === "Single") {
-        return (
-          <input
-            type="range"
-            min={min}
-            max={max}
-            step={stepSize}
-            value={value as number}
-            onChange={handleChange}
-          />
-        );
-      } else {
-        return (
-          <input
-            type="range"
-            min={min}
-            max={max}
-            step={stepSize}
-            value={(value as number[]).join(",")}
-            onChange={handleChange}
-            multiple
-          />
-        );
-      }
-    }
-    return null;
-  };
-
-  return <div>{renderSlider()}</div>;
+  return (
+    <>
+      {/* <div className="slider-container"> */}
+      <div className="slider-track">
+        <div className="slider-thumb thumb-left">
+          <div className="slider-thumb-inner" />
+        </div>
+      </div>
+      {/* </div>; */}
+    </>
+  );
 };
 
 export { Slider };
