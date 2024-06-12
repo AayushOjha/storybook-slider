@@ -5,7 +5,7 @@ function App() {
   return (
     <div className="page">
       <div style={{width: 250}}>
-      <Slider type="Continuous" subtype="Range" onChange={() => {}} />
+      <Slider type="Discreet" subtype="Single" onChange={() => {}} />
       </div>
     </div>
   );
