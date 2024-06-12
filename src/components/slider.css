@@ -1,0 +1,8 @@
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: green;
+    cursor: pointer;
+    width: 15rem;
+    height: 7px;
+  }

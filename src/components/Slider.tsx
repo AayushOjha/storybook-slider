@@ -1,4 +1,5 @@
 import React from "react";
+import "./slider.css"
 
 type SliderType = "Continuous" | "Discreet";
 type SliderSubtype = "Single" | "Range";
